@@ -1,62 +1,51 @@
 import Foundation
-import Security
 
 
-public final actor AuthenticationManager: AuthenticationProtocol {
+//  MARK: - Token Refresh Endpoint
+public protocol TokenRefreshEndpoint: Endpoint {
+    var expiration: Date { get }
+}
+
+
+public protocol AuthenticationServicing: NetworkRequesting, AuthenticatingRequests, ManagingTokens  {
+    func getToken() async -> String?
+    func setToken(_ token: String?) async
+    func getTokenExpiration() async -> Date?
+    func setTokenExpiration(_ expiration: Date?) async
+    func validToken() async throws -> String
+    func refreshedToken() async throws -> String
+}
+
+
+//  MARK: - Authentication Service
+public actor AuthenticationService: AuthenticationServicing {
+
     
-    
-    //  MARK: - Private Properties
-    private let networkClient: NetworkClientProtocol
-    
-    // TODO: - expose?
-    private var token: String?
-    private var tokenExpirationDate: Date?
-    
-    
+    //  MARK: - Public Properties
+    public let decoder: JSONDecoder = JSONDecoder()
+    public let encoder: JSONEncoder = JSONEncoder()
+    public let networkClient: NetworkDataTransporting
+    private var _token: String?
+    private var _tokenExpiration: Date?
+    private let tokenRefreshEndpoint: TokenRefreshEndpoint
+
     
     //  MARK: - Init
-    public init(networkClient: NetworkClientProtocol) {
+    public init(
+        networkClient: NetworkDataTransporting,
+        tokenRefreshEndpoint: TokenRefreshEndpoint
+    ) {
         self.networkClient = networkClient
+        self.tokenRefreshEndpoint = tokenRefreshEndpoint
     }
-    
-    
-    
-    //  MARK: - Internal API
-    public func authenticatedRequest(forRequest request: URLRequest) async throws -> URLRequest {
-        var authenticatedRequest = request
-        let token = try await validToken()
-        authenticatedRequest.addValue(
-            "Bearer \(token)",
-            forHTTPHeaderField: "Authorization"
-        )
-        return request
-    }
-    
-    
-    
-    //  MARK: - Private API
-    private func validToken() async throws -> String {
-        
-        if let token,
-            let tokenExpirationDate,
-            tokenExpirationDate > Date() {
-            return token
-        }
-        
-        return try await refreshedToken()
-    }
-    
-    
-    // TODO: - expose mechanism for implementing refresh logic
-    private func refreshedToken() async throws -> String {
-        
-        let oneHour: TimeInterval = 3600
 
-        let request = URLRequest(url: URL(string: "REFRESHER_URL")!)
-        let (data, _) = try await networkClient.sendRequest(request)
-        let newToken = String(data: data, encoding: .utf8) ?? ""
-        token = newToken
-        tokenExpirationDate = Date().addingTimeInterval(oneHour)
-        return newToken
-    }
+    
+    //  MARK: - Public API
+    public func getToken() async -> String? { _token }
+    public func setToken(_ token: String?) async { _token = token }
+    public func getTokenExpiration() async -> Date? { _tokenExpiration }
+    public func setTokenExpiration(_ expiration: Date?) async { _tokenExpiration = expiration }
+    public func getTokenRefreshEndpoint() -> TokenRefreshEndpoint { tokenRefreshEndpoint }
+    
+
 }

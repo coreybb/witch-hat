@@ -1,6 +1,6 @@
 import Foundation
 
-public protocol Endpoint {
+public protocol Endpoint: Sendable {
     var baseURL: URL { get }
     var path: String { get }
     var method: HTTPMethod { get }
