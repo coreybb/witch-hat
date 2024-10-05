@@ -16,7 +16,7 @@ public protocol Endpoint: Sendable {
 
 
 //  MARK: - Default Implementation
-extension Endpoint {
+public extension Endpoint {
     
     var url: URL {
         var components = URLComponents(
