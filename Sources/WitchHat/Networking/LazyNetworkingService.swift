@@ -1,8 +1,7 @@
 import Foundation
 
-open class LazyNetworkingService: ClientNetworking, JSONCoding, NetworkRequesting, RequestAuthenticating {
+open class LazyNetworkingService: ClientNetworking, JSONCoding, NetworkRequesting {
     
-    public let authService: any AuthenticationServicing
     public let networkClient: any NetworkDataTransporting
     public let encoder: JSONEncoder
     public let decoder: JSONDecoder
@@ -11,13 +10,11 @@ open class LazyNetworkingService: ClientNetworking, JSONCoding, NetworkRequestin
     public init(
         networkClient: any NetworkDataTransporting,
         encoder: JSONEncoder,
-        decoder: JSONDecoder,
-        authService: any AuthenticationServicing
+        decoder: JSONDecoder
     ) {
         self.networkClient = networkClient
         self.encoder = encoder
         self.decoder = decoder
-        self.authService = authService
     }
 }
 
