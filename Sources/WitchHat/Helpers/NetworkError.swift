@@ -7,5 +7,12 @@ enum NetworkError: Error {
     case decodingError
     case noInternetConnection
     case unauthorized
+    case unexpectedEmptyResponse
     case unknown
+}
+
+
+enum AuthenticationError: Error {
+    
+    case tokenRefreshFailed
 }

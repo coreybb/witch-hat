@@ -27,12 +27,7 @@ public final class NetworkMonitor: ObservableObject {
     
     //  MARK: - Private API
     private func setupMonitor() {
-        // TODO: - Implemen†
-//        monitor.pathUpdateHandler = { [weak self] path in
-//            Task { @MainActor [weak self] in
-//                self?.isConnected = path.status == .satisfied
-//            }
-//        }
+        // TODO: - Implement
         
         monitor.start(queue: queue)
     }

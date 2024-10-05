@@ -1,7 +1,13 @@
-public struct HTTPHeader {
+import Foundation
+
+public struct HTTPHeader: Sendable {
 
     let name: Name
     let value: String
+    
+    public static func bearerToken(_ token: String) -> HTTPHeader {
+        HTTPHeader(name: .authorization, value: "Bearer \(token)")
+    }
     
     
     
@@ -29,7 +35,7 @@ public struct HTTPHeader {
 
 public extension HTTPHeader {
     
-    enum Name: String {
+    enum Name: String, Sendable {
         case contentType = "Content-Type"
         case accept = "Accept"
         case authorization = "Authorization"
@@ -47,20 +53,16 @@ public extension HTTPHeader {
         public enum Accept: String {
             case applicationJSON = "application/json"
             case textHTML = "text/html"
+            
         }
     }
-}
+ }
 
 
 
-
-public extension Array where Element == HTTPHeader {
-
-    func toDictionary() -> [String: String] {
-        Dictionary(
-            uniqueKeysWithValues: self.map {
-                ($0.name.rawValue, $0.value)
-            }
-        )
+extension URLRequest {
+    
+    mutating func addHeader(_ header: HTTPHeader) {
+        addValue(header.value, forHTTPHeaderField: header.name.rawValue)
     }
 }

@@ -1,12 +1,13 @@
 import Foundation
 
 public protocol Endpoint: Sendable {
+    associatedtype Body: Encodable
     var baseURL: URL { get }
     var path: String { get }
     var method: HTTPMethod { get }
     var headers: [HTTPHeader] { get }
     var queryItems: [URLQueryItem]? { get }
-    var body: Encodable? { get }
+    var body: Body? { get }
     var requiresAuthentication: Bool { get }
     var url: URL { get }
     func urlRequest(using encoder: JSONEncoder?) -> URLRequest
@@ -45,3 +46,16 @@ extension Endpoint {
     }
 }
 
+
+
+
+fileprivate extension Array where Element == HTTPHeader {
+
+    func toDictionary() -> [String: String] {
+        Dictionary(
+            uniqueKeysWithValues: self.map {
+                ($0.name.rawValue, $0.value)
+            }
+        )
+    }
+}
