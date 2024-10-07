@@ -1,7 +1,7 @@
 import Foundation
 
 public protocol Endpoint: Sendable {
-    associatedtype Body: Encodable
+    associatedtype Body: Encodable = Never
     var baseURL: URL { get }
     var path: String { get }
     var method: HTTPMethod { get }
@@ -17,6 +17,7 @@ public protocol Endpoint: Sendable {
 
 //  MARK: - Default Implementation
 public extension Endpoint {
+    
     
     var requiresAuthentication: Bool { false }
     
