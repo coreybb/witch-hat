@@ -9,8 +9,8 @@ open class LazyNetworkingService: ClientNetworking, JSONCoding, NetworkRequestin
     
     public init(
         networkClient: any NetworkDataTransporting,
-        encoder: JSONEncoder,
-        decoder: JSONDecoder
+        encoder: JSONEncoder = JSONEncoder(),
+        decoder: JSONDecoder = JSONDecoder()
     ) {
         self.networkClient = networkClient
         self.encoder = encoder

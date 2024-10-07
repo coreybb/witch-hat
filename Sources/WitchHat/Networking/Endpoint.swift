@@ -5,7 +5,7 @@ public protocol Endpoint: Sendable {
     var baseURL: URL { get }
     var path: String { get }
     var method: HTTPMethod { get }
-    var headers: [HTTPHeader] { get }
+    var headers: [HTTPHeader]? { get }
     var queryItems: [URLQueryItem]? { get }
     var body: Body? { get }
     var requiresAuthentication: Bool { get }
@@ -17,6 +17,14 @@ public protocol Endpoint: Sendable {
 
 //  MARK: - Default Implementation
 public extension Endpoint {
+    
+    var requiresAuthentication: Bool { false }
+    
+    var queryItems: [URLQueryItem]? { nil }
+    
+    var body: Body? { nil }
+
+    var headers: [HTTPHeader]? { nil }
     
     var url: URL {
         var components = URLComponents(
@@ -35,7 +43,7 @@ public extension Endpoint {
     func urlRequest(using encoder: JSONEncoder?) -> URLRequest {
         var request = URLRequest(url: url)
         request.httpMethod = method.rawValue
-        request.allHTTPHeaderFields = headers.toDictionary()
+        request.allHTTPHeaderFields = headers?.toDictionary()
         
         if let body = body,
             let encoder = encoder {
@@ -45,8 +53,6 @@ public extension Endpoint {
         return request
     }
 }
-
-
 
 
 fileprivate extension Array where Element == HTTPHeader {
