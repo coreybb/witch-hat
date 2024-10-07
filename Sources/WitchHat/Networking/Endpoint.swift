@@ -1,7 +1,18 @@
 import Foundation
 
+public protocol EndpointGroup {
+    static var baseURL: URL { get }
+}
+
+public protocol GroupedEndpoint: Endpoint where Group: EndpointGroup { }
+
+public extension GroupedEndpoint {
+    var baseURL: URL { Group.baseURL }
+}
+
 public protocol Endpoint: Sendable {
     associatedtype Body: Encodable = Never
+    associatedtype Group: EndpointGroup = Never
     var baseURL: URL { get }
     var path: String { get }
     var method: HTTPMethod { get }
@@ -18,6 +29,12 @@ public protocol Endpoint: Sendable {
 //  MARK: - Default Implementation
 public extension Endpoint {
     
+    var baseURL: URL {
+        guard Group.self != Never.self else {
+            fatalError("Endpoint requires either a defined EndpointGroup or override baseURL")
+        }
+        return Group.baseURL
+    }
     
     var requiresAuthentication: Bool { false }
     
@@ -53,6 +70,11 @@ public extension Endpoint {
         
         return request
     }
+}
+
+
+public enum EndpointError: Error {
+    case invalidURLComponents
 }
 
 
