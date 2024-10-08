@@ -29,6 +29,10 @@ public protocol Endpoint: Sendable {
 
 //  MARK: - Default Implementation
 public extension Endpoint {
+    
+    var path: String? { nil }
+    
+    var method: HTTPMethod { .get }
 
     var requiresAuthentication: Bool { false }
     

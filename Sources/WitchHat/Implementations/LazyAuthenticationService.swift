@@ -1,26 +1,6 @@
 import Foundation
 
-public protocol RequestAuthenticating {
-    var authService: AuthenticationServicing { get }
-}
-
-public protocol AuthenticationServicing: NetworkRequesting {
-    
-    func validToken() async throws -> String
-    func refreshToken() async throws
-    func addAuthenticationHeader(to request: inout URLRequest) async throws
-}
-
-
-public extension AuthenticationServicing {
-    
-    func addAuthenticationHeader(to request: inout URLRequest) async throws {
-        request.addHeader(.bearerToken(try await validToken()))
-    }
-}
-
-
-public actor AuthenticationService<T: TokenRefreshEndpoint>: AuthenticationServicing {
+public actor LazyAuthenticationService<T: TokenRefreshEndpoint>: AuthenticationServicing {
 
     public let decoder: JSONDecoder
     public let encoder: JSONEncoder
@@ -64,12 +44,4 @@ public actor AuthenticationService<T: TokenRefreshEndpoint>: AuthenticationServi
         token = newToken
         tokenExpiration = (Date().addingTimeInterval(tokenRefreshEndpoint.tokenLifetime))
     }
-}
-
-
-
-public protocol TokenRefreshEndpoint: Endpoint {
-    associatedtype TokenResponse: Decodable & Sendable
-    var tokenLifetime: TimeInterval { get }
-    func extractToken(from response: TokenResponse) -> String?
 }
