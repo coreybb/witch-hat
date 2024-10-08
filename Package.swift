@@ -6,7 +6,10 @@ import PackageDescription
 let package = Package(
     name: "WitchHat",
     platforms: [
-        .iOS(.v17)
+        .iOS(.v17),
+        .macOS(.v11),
+        .macCatalyst(.v13),
+        .visionOS(.v1)
     ],
     products: [
         .library(
