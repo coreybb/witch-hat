@@ -43,16 +43,21 @@ public extension Endpoint {
     var headers: [HTTPHeader]? { nil }
     
     var url: URL {
-        
-        var components = {
-            (path == nil) ? nil :
+
+        let baseComponents = path.map {
             URLComponents(
-                url: baseURL.appendingPathComponent(path!),
+                url: baseURL.appendingPathComponent($0),
                 resolvingAgainstBaseURL: true
             )
-        }()
+        } ?? URLComponents(url: baseURL, resolvingAgainstBaseURL: true)
         
+        guard queryItems?.isEmpty == false else {
+            return baseComponents?.url ?? baseURL
+        }
+        
+        var components = baseComponents
         components?.queryItems = queryItems
+        
         guard let url = components?.url else {
             preconditionFailure("Invalid URL components: \(String(describing: components))")
         }
@@ -60,6 +65,7 @@ public extension Endpoint {
         return url
     }
 
+    
     func urlRequest(using encoder: JSONEncoder?) -> URLRequest {
         var request = URLRequest(url: url)
         request.httpMethod = method.rawValue
