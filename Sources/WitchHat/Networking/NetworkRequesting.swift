@@ -1,4 +1,5 @@
 import Foundation
+import UIKit.UIImage
 
 public struct EmptyResponse: Decodable {}
 
@@ -6,6 +7,7 @@ public struct EmptyResponse: Decodable {}
 /// A protocol for handling network requests. It includes the necessary encoder and decoder for encoding requests and decoding responses.
 public protocol NetworkRequesting where Self: ClientNetworking & JSONCoding {
     func request<ResponseObject: Decodable>(_ endpoint: any Endpoint) async throws -> ResponseObject
+    func requestImage(_ endpoint: any Endpoint) async throws -> UIImage
 }
 
 
@@ -18,17 +20,27 @@ public extension NetworkRequesting {
     /// - Returns: A response object that conforms to `Decodable`.
     /// - Throws: Throws an error if the request fails or if decoding the response fails.
     func request<ResponseObject: Decodable>(_ endpoint: any Endpoint) async throws -> ResponseObject {
+        try await prepareAndSendRequest(endpoint).decode(using: decoder)
+    }
+
+    
+    func requestImage(_ endpoint: any Endpoint) async throws -> UIImage {
+        try await prepareAndSendRequest(endpoint).decodeAsImage()
+    }
+    
+    
+    private func prepareAndSendRequest(_ endpoint: any Endpoint) async throws -> Data {
         
         var request = endpoint.urlRequest(using: encoder)
         
         if endpoint.requiresAuthentication,
-            let authenticator = self as? AuthenticationServicing {
+           let authenticator = self as? AuthenticationServicing {
             try await authenticator.addAuthenticationHeader(to: &request)
         }
         
         let (data, response) = try await networkClient.sendRequest(request)
         try response.isOK()
-        return try data.decode(using: decoder)
+        return data
     }
 }
 
@@ -45,6 +57,14 @@ fileprivate extension Data {
         } else {
             return try decoder.decode(T.self, from: self)
         }
+    }
+    
+    
+    func decodeAsImage() throws -> UIImage {
+        guard let image = UIImage(data: self) else {
+            throw NetworkError.decodingError
+        }
+        return image
     }
 }
 
