@@ -1,5 +1,5 @@
 import Foundation
 
-struct LazyEndpoint: Endpoint {
-    let baseURL: URL
+public struct LazyEndpoint: Endpoint {
+    public let baseURL: URL
 }
