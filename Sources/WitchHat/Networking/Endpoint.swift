@@ -15,7 +15,7 @@ public extension GroupedEndpoint {
 public protocol Endpoint: Sendable {
     associatedtype Body: Encodable = Never
     var baseURL: URL { get }
-    var path: String { get }
+    var path: String? { get }
     var method: HTTPMethod { get }
     var headers: [HTTPHeader]? { get }
     var queryItems: [URLQueryItem]? { get }
@@ -39,10 +39,14 @@ public extension Endpoint {
     var headers: [HTTPHeader]? { nil }
     
     var url: URL {
-        var components = URLComponents(
-            url: baseURL.appendingPathComponent(path),
-            resolvingAgainstBaseURL: true
-        )
+        
+        var components = {
+            (path == nil) ? nil :
+            URLComponents(
+                url: baseURL.appendingPathComponent(path!),
+                resolvingAgainstBaseURL: true
+            )
+        }()
         
         components?.queryItems = queryItems
         guard let url = components?.url else {
