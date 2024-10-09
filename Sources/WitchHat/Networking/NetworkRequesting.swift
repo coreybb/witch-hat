@@ -25,7 +25,7 @@ public protocol NetworkRequesting where Self: ClientNetworking & JSONCoding {
 
 public extension NetworkRequesting {
     
-    /// Makes a network request to the specified endpoint with an optional request body, and decodes the response into the specified response object type.
+    /// Makes a network request to the specified endpoint and decodes the response into the specified response object type.
     ///
     /// - Parameters:
     ///   - endpoint: The endpoint to which the request will be made..
@@ -36,7 +36,12 @@ public extension NetworkRequesting {
     }
 
 
-
+    /// Makes a network request to the specified endpoint and returns the raw data from the from the response.
+    ///
+    /// - Parameters:
+    ///   - endpoint: The endpoint to which the request will be made..
+    /// - Returns: A response object that conforms to `Decodable`.
+    /// - Throws: Throws an error if the request fails or if decoding the response fails.
     func requestData(_ endpoint: any Endpoint) async throws -> Data {
         try await prepareAndSendRequest(endpoint)
     }
