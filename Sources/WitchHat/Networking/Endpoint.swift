@@ -16,32 +16,37 @@ public protocol Endpoint: Sendable {
     associatedtype Body: Encodable = Never
     var baseURL: URL { get }
     var path: String? { get }
-    var method: HTTPMethod { get }
-    var headers: [HTTPHeader]? { get }
-    var queryItems: [URLQueryItem]? { get }
-    var body: Body? { get }
+    var method: HTTPMethod { get set }
+    var headers: [HTTPHeader]? { get set }
+    var queryItems: [URLQueryItem]? { get set }
+    var body: Body? { get set }
     var requiresAuthentication: Bool { get }
     var url: URL { get }
     func urlRequest(using encoder: JSONEncoder?) -> URLRequest
 }
 
 
-
 //  MARK: - Default Implementation
 public extension Endpoint {
     
     var path: String? { nil }
-    
-    var method: HTTPMethod { .get }
-
+    var method: HTTPMethod {
+        get { .get }
+        set { /* no-op, or handle if needed */ }
+    }
+    var headers: [HTTPHeader]? {
+        get { nil }
+        set { /* no-op, or handle if needed */ }
+    }
+    var queryItems: [URLQueryItem]? {
+        get { nil }
+        set { /* no-op, or handle if needed */ }
+    }
+    var body: Body? {
+        get { nil }
+        set { /* no-op, or handle if needed */ }
+    }
     var requiresAuthentication: Bool { false }
-    
-    var queryItems: [URLQueryItem]? { nil }
-    
-    var body: Body? { nil }
-
-    var headers: [HTTPHeader]? { nil }
-    
     var url: URL {
 
         let baseComponents = path.map {
@@ -78,11 +83,6 @@ public extension Endpoint {
         
         return request
     }
-}
-
-
-public enum EndpointError: Error {
-    case invalidURLComponents
 }
 
 
