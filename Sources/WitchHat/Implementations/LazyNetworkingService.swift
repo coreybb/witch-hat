@@ -1,6 +1,6 @@
 import Foundation
 
-open class LazyNetworkingService: ClientNetworking, JSONCoding, NetworkRequesting {
+public actor LazyNetworkingService: ClientNetworking, JSONCoding, NetworkRequesting {
     
     public let networkClient: any NetworkDataTransporting
     public let encoder: JSONEncoder

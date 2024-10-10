@@ -14,7 +14,11 @@ public struct LazyEndpoint<Body: Encodable & Sendable>: Endpoint {
     public var headers: [HTTPHeader]?
     public var queryItems: [URLQueryItem]?
     public var body: Body?
+}
 
+
+public extension LazyEndpoint where Body == Never {
+    
     /// - Parameters:
     ///   - url: The base URL for the endpoint. This is the root URL that the request will be sent to.
     ///   - path: The path component to be appended to the `baseURL`, such as `v1/users`.
@@ -26,7 +30,7 @@ public struct LazyEndpoint<Body: Encodable & Sendable>: Endpoint {
     ///   - queryItems: An array of `URLQueryItem` instances representing query parameters to be added to the request URL.
     ///                 Defaults to `nil`, meaning no query parameters will be included unless specified.
     ///   - body: The request body as an `Encodable & Sendable` object. Defaults to `nil`.
-    public init(
+    init(
         url: URL,
         path: String? = nil,
         method: HTTPMethod = .get,
@@ -41,18 +45,19 @@ public struct LazyEndpoint<Body: Encodable & Sendable>: Endpoint {
         self.queryItems = queryItems
         self.body = body
     }
-}
-
-
-public extension LazyEndpoint where Body == Never {
+    
     
     /// An initializer for `LazyEndpoint` when no request body is needed.
     /// - Parameters:
-    ///   - url: The base URL for the endpoint.
-    ///   - path: The path component to be appended to the `baseURL`.
-    ///   - method: The HTTP method for the request.
-    ///   - headers: The headers to include in the request.
-    ///   - queryItems: The query parameters to include in the request.
+    ///   - url: The base URL for the endpoint. This is the root URL that the request will be sent to.
+    ///   - path: The path component to be appended to the `baseURL`, such as `v1/users`.
+    ///           Defaults to `nil`, meaning no additional path will be appended.
+    ///   - method: The HTTP method for the request, such as `.get`, `.post`, or `.delete`.
+    ///             Defaults to `.get` for simple `GET` requests without further configuration.
+    ///   - headers: An array of `HTTPHeader` instances to include with the request, such as authorization or content type.
+    ///              Defaults to `nil`, meaning no headers will be sent unless explicitly provided.
+    ///   - queryItems: An array of `URLQueryItem` instances representing query parameters to be added to the request URL.
+    ///                 Defaults to `nil`, meaning no query parameters will be included unless specified.
     init(
         url: URL,
         path: String? = nil,
@@ -70,3 +75,4 @@ public extension LazyEndpoint where Body == Never {
         )
     }
 }
+

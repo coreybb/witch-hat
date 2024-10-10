@@ -54,7 +54,7 @@ public extension NetworkRequesting {
     /// - Throws: An error if preparing the request, authentication, or sending the request fails.
     private func prepareAndSendRequest(_ endpoint: any Endpoint) async throws -> Data {
         
-        var request = endpoint.urlRequest(using: encoder)
+        var request = try endpoint.urlRequest(using: encoder)
         
         if endpoint.requiresAuthentication,
            let authenticator = self as? AuthenticationServicing {

@@ -63,7 +63,7 @@ public protocol Endpoint: Sendable {
     /// Creates a `URLRequest` object based on the properties of the endpoint.
     /// - Parameter encoder: A `JSONEncoder` used to encode the request body if provided.
     /// - Returns: A configured `URLRequest` object.
-    func urlRequest(using encoder: JSONEncoder?) -> URLRequest
+    func urlRequest(using encoder: JSONEncoder?) throws -> URLRequest
 }
 
 
@@ -135,7 +135,7 @@ public extension Endpoint {
     /// Creates a `URLRequest` object configured with the endpoint's details.
     /// - Parameter encoder: A `JSONEncoder` for encoding the request body if one is present.
     /// - Returns: A configured `URLRequest` object.
-    func urlRequest(using encoder: JSONEncoder?) -> URLRequest {
+    func urlRequest(using encoder: JSONEncoder?) throws -> URLRequest {
         
         var request = URLRequest(url: url)
         request.httpMethod = method.rawValue
@@ -143,7 +143,7 @@ public extension Endpoint {
         
         if let body = body,
             let encoder = encoder {
-            request.httpBody = try? encoder.encode(body)
+            request.httpBody = try encoder.encode(body)
         }
         
         return request
