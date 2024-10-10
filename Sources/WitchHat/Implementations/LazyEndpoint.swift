@@ -42,3 +42,31 @@ public struct LazyEndpoint<Body: Encodable & Sendable>: Endpoint {
         self.body = body
     }
 }
+
+
+public extension LazyEndpoint where Body == Never {
+    
+    /// An initializer for `LazyEndpoint` when no request body is needed.
+    /// - Parameters:
+    ///   - url: The base URL for the endpoint.
+    ///   - path: The path component to be appended to the `baseURL`.
+    ///   - method: The HTTP method for the request.
+    ///   - headers: The headers to include in the request.
+    ///   - queryItems: The query parameters to include in the request.
+    init(
+        url: URL,
+        path: String? = nil,
+        method: HTTPMethod = .get,
+        headers: [HTTPHeader]? = nil,
+        queryItems: [URLQueryItem]? = nil
+    ) {
+        self.init(
+            url: url,
+            path: path,
+            method: method,
+            headers: headers,
+            queryItems: queryItems,
+            body: nil
+        )
+    }
+}
