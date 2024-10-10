@@ -2,8 +2,7 @@
 
 <img src="Sources/Media.xcassets/witchhat.imageset/witchhat.png" width="300" alt="Witch Hat Logo">
 So lean it's emaciated. So lightweight it flies.
-
-
+- - - 
 Witch Hat is a Swift networking library for developers bored of writing the same networking code for every new project.
     • Flexible, type-safe and extensible
     • Lightweight with zero dependencies
@@ -11,10 +10,10 @@ Witch Hat is a Swift networking library for developers bored of writing the same
 
 ## Features
 
-    •    Custom Endpoints: Define reusable and modular API endpoints with customizable HTTP methods, headers, query items, and body data.
-    •    Token-Based Authentication: Built-in support for managing token-based authentication with automatic token refresh.
-    •    Grouped Endpoints: Organize related endpoints with shared base URLs.
-    •    Error Handling: Handle network errors, decoding issues, and token refresh failures with detailed error types.
+- Custom Endpoints: Define reusable and modular API endpoints with customizable HTTP methods, headers, query items, and body data.
+- Token-Based Authentication: Built-in support for managing token-based authentication with automatic token refresh.
+- Grouped Endpoints: Organize related endpoints with shared base URLs.
+- Error Handling: Handle network errors, decoding issues, and token refresh failures with detailed error types.
 
 ## Installation
 
