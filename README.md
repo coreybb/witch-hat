@@ -4,8 +4,11 @@
 So lean it's emaciated. So lightweight it flies.
 <br><br>
 Witch Hat is a Swift networking library for developers bored of writing the same networking code for every new project.
+<br>
 - Flexible, type-safe and extensible
+<br>
 - Lightweight with zero dependencies
+<br>
 - Uses actors and async/await for thread-safety
 
 ## Features
@@ -38,7 +41,7 @@ Then, add it as a dependency to your target:
 
 #### Example 1: Basic GET Request
 
-This example demonstrates how to make a simple GET request to retrieve user data using a custom endpoint.
+Make a simple GET request to retrieve user data using a custom endpoint.
 
 ```swift
 import WitchHat
@@ -74,7 +77,7 @@ Task {
 
 #### Example 2: POST Request with JSON Body
 
-This example shows how to make a POST request with a JSON-encoded body using a custom Endpoint.
+Make a POST request with a JSON-encoded body using a custom Endpoint.
 
 ```swift
 import WitchHat
@@ -117,7 +120,7 @@ Task {
 
 #### Example 3: Authentication with Token Refresh
 
-This example demonstrates how to use AuthenticationServicing to manage token-based authentication with automatic token refresh.
+Use AuthenticationServicing to manage token-based authentication with automatic token refresh.
 
 ```swift
 import WitchHat
@@ -180,7 +183,7 @@ class SecureService: LazyNetworkingService, RequestAuthenticating {
 
 #### Example 4: Dynamic Headers and Query Parameters
 
-This example shows how to add dynamic headers and query parameters to a request.
+Add dynamic headers and query parameters to a request.
 
 ```swift
 struct SearchEndpoint: GroupedEndpoint {
@@ -217,7 +220,7 @@ Task {
 
 #### Example 5: Handling an Empty Response
 
-Some API endpoints might return an empty response. This example demonstrates how to handle such cases using the EmptyResponse type.
+Some API endpoints might return an empty response. For now, Witch Hat handles such cases using the EmptyResponse type.
 
 ```swift
 struct DeleteUserEndpoint: GroupedEndpoint {
@@ -253,3 +256,5 @@ We welcome contributions! If you have ideas for features or improvements, feel f
 
 This project is licensed under the MIT License. See the LICENSE file for more details.
 
+## Contact
+[Connect with me on LinkedIn.](https://www.linkedin.com/in/coreybeebe)
