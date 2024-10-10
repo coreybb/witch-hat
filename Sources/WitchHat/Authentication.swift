@@ -1,12 +1,20 @@
 import Foundation
 
-public protocol RequestAuthenticating {
-    var authService: AuthenticationServicing { get }
-}
 
 /// A protocol that defines the requirements for a service that manages authentication in network requests.
 /// This includes fetching valid tokens, refreshing expired tokens, and adding authentication headers to requests.
-public protocol AuthenticationServicing: NetworkRequesting {
+public protocol AuthenticationServicing: AnyObject, NetworkRequesting {
+    
+    associatedtype RefreshEndpoint: TokenRefreshEndpoint
+    
+    var tokenRefreshEndpoint: RefreshEndpoint { get }
+    
+    func getToken() async -> String?
+    func setToken(_ token: String?) async
+    func getTokenExpiration() async -> Date?
+    func setTokenExpiration(_ date: Date?) async
+
+    
     
     /// Provides a valid token for authentication, refreshing it if necessary.
     /// - Returns: A valid authentication token as a `String`.
@@ -33,23 +41,30 @@ public extension AuthenticationServicing {
     func addAuthenticationHeader(to request: inout URLRequest) async throws {
         request.addHeader(.bearerToken(try await validToken()))
     }
-}
+    
+    
+    func validToken() async throws -> String {
+        if let token = await getToken(),
+           let expiration = await getTokenExpiration(),
+           expiration > Date() {
+            return token
+        } else {
+            try await refreshToken()
+            guard let token = await getToken() else {
+                throw AuthenticationError.tokenRefreshFailed
+            }
+            return token
+        }
+    }
+    
 
-
-/// A protocol that defines the requirements for an endpoint that supports token refresh operations.
-/// Types conforming to this protocol should specify how the token is extracted from the response and
-/// the lifetime of the token.
-public protocol TokenRefreshEndpoint: Endpoint {
-    
-    /// The type of response returned when a token refresh request is made.
-    /// This type must conform to `Decodable` and `Sendable`.
-    associatedtype TokenResponse: Decodable & Sendable
-    
-    /// The lifetime of the token in seconds. Used to determine when the token should be refreshed.
-    var tokenLifetime: TimeInterval { get }
-    
-    /// Extracts the token from the response received after a token refresh request.
-    /// - Parameter response: The decoded response object containing the new token.
-    /// - Returns: A `String` representing the extracted token, or `nil` if extraction fails.
-    func extractToken(from response: TokenResponse) -> String?
+    func refreshToken() async throws {
+        let response: RefreshEndpoint.TokenResponse = try await request(tokenRefreshEndpoint)
+        guard let newToken = tokenRefreshEndpoint.extractToken(from: response) else {
+            throw AuthenticationError.tokenRefreshFailed
+        }
+        await setToken(newToken)
+        let expirationDate = tokenRefreshEndpoint.extractTokenExpirationDate(from: response)
+        await setTokenExpiration(expirationDate)
+    }
 }
