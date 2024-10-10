@@ -42,7 +42,7 @@ public protocol Endpoint: Sendable {
     /// Example: For `https://api.example.com/v1/users`, the `path` would be "v1/users".
     var path: String? { get }
     
-    /// The enumerated HTTP method to use for the request (e.g., GET, POST).
+    /// The enumerated HTTP method to use for the request (e.g.,` GET`, `POST`).
     var method: HTTPMethod { get set }
     
     /// Optional enumerated headers to include in the request.

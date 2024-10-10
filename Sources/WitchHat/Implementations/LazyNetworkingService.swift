@@ -26,4 +26,5 @@ open class LazyNetworkingService: ClientNetworking, JSONCoding, NetworkRequestin
  - Logging
  - Retries
  - Caching
+ - Tests
  */

@@ -1,8 +1,6 @@
 import Network
 import Combine
 
-
-
 // TODO: - make actor?
 public final class NetworkMonitor: ObservableObject {
     
