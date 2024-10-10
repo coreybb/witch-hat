@@ -32,14 +32,3 @@ public actor LazyNetworkingService: ClientNetworking, JSONCoding, NetworkRequest
         self.decoder = decoder
     }
 }
-
-//---------
-// TODO: -
-//---------
-/*
- - Network monitoring
- - Logging
- - Retries
- - Caching
- - Tests
- */

@@ -49,12 +49,16 @@ public actor LazyAuthenticationService<T: TokenRefreshEndpoint>: AuthenticationS
     /// Retrieves the current authentication token.
     ///
     /// - Returns: The current token as a `String`, or `nil` if not set.
-    public func getToken() -> String? { token }
+    public func getToken() -> String? {
+        token
+    }
     
     /// Retrieves the expiration date of the current token.
     ///
     /// - Returns: The expiration `Date` of the token, or `nil` if not set.
-    public func getTokenExpiration() -> Date? { tokenExpiration }
+    public func getTokenExpiration() -> Date? {
+        tokenExpiration
+    }
     
     /// Sets the authentication token.
     ///

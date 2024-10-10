@@ -15,7 +15,6 @@ public protocol AuthenticationServicing: AnyObject, NetworkRequesting {
     func setTokenExpiration(_ date: Date?) async
 
     
-    
     /// Provides a valid token for authentication, refreshing it if necessary.
     /// - Returns: A valid authentication token as a `String`.
     /// - Throws: An error if the token cannot be retrieved or refreshed.
