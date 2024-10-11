@@ -4,8 +4,6 @@ import Foundation
 /// Conforms to the `AuthenticationServicing` protocol to provide authentication capabilities.
 public actor LazyAuthenticationService<T: TokenRefreshEndpoint>: AuthenticationServicing, NetworkStatusProviding {
    
-    
-    
     /// The type of the token refresh endpoint.
     public typealias RefreshEndpoint = T
     
@@ -37,7 +35,7 @@ public actor LazyAuthenticationService<T: TokenRefreshEndpoint>: AuthenticationS
     ///   - networkClient: The network client used to send requests.
     ///   - tokenRefreshEndpoint: The endpoint used to refresh authentication tokens.
     ///   - decoder: A JSON decoder for decoding responses. Defaults to a new `JSONDecoder`.
-    ///   - encoder: A JSON encoder for encoding request bodies. Defaults to a new `JSONEncoder
+    ///   - encoder: A JSON encoder for encoding request bodies. Defaults to a new `JSONEncoder`.
     ///   - networkMonitor: The type implementing `NetworkMonitoring`. Defaults to a basic implementation.
     public init(
         networkClient: NetworkDataTransporting,
