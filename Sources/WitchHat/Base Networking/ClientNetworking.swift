@@ -1,5 +1,9 @@
 import Foundation
 
+public protocol NetworkDataTransporting: Sendable {
+    func sendRequest(_ request: URLRequest) async throws -> (Data, URLResponse)
+}
+
 
 /// A protocol that all client networking components must conform to. It ensures that a network client is available for performing network operations.
 public protocol ClientNetworking {
@@ -7,13 +11,7 @@ public protocol ClientNetworking {
 }
 
 
-public protocol NetworkDataTransporting: Sendable {
-    func sendRequest(_ request: URLRequest) async throws -> (Data, URLResponse)
-}
-
-
-
-//  MARK: - Default Implementation
+//  MARK: - URLSession Extension + Default Implementation
 extension URLSession: NetworkDataTransporting {
     
     public func sendRequest(_ request: URLRequest) async throws -> (Data, URLResponse) {

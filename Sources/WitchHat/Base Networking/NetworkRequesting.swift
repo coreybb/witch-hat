@@ -73,23 +73,27 @@ private extension NetworkRequesting {
     }
 
 
-    //  TODO: - Extract retry logic into discrete component (addressing exp backoff, jitter, custom status codes, etc.)
+    //  TODO: - Extract retry logic into discrete component (configurable retry count, exp backoff, jitter, custom status codes, etc.)
     private func performRequest(_ request: URLRequest, for endpoint: any Endpoint, remainingRetries: Int) async throws -> Data {
+        try await attemptNetworkStatusCheck()
         let (data, response) = try await networkClient.sendRequest(request)
-        
+
         if try await shouldRetry(response: response, for: endpoint, remainingRetries: remainingRetries) {
-            var newRequest = request
-            if let authenticator = self as? (any AuthenticationServicing) {
-                try await authenticator.refreshToken()
-                try await authenticator.addAuthenticationHeader(to: &newRequest)
-            }
-            return try await performRequest(newRequest, for: endpoint, remainingRetries: remainingRetries - 1)
+            return try await performRetry(for: request, for: endpoint, remainingRetries: remainingRetries)
         }
         
         try response.validate()
         return data
     }
-
+    
+    
+    private func attemptNetworkStatusCheck() async throws {
+        if let networkStatusProvider = self as? NetworkStatusProviding,
+           !(await networkStatusProvider.isConnectedToNetwork()) {
+            throw NetworkError.noInternetConnection
+        }
+    }
+    
     
     private func shouldRetry(response: URLResponse, for endpoint: any Endpoint, remainingRetries: Int) async throws -> Bool {
         guard remainingRetries > 0,
@@ -99,5 +103,20 @@ private extension NetworkRequesting {
             return false
         }
         return true
+    }
+    
+    
+    private func performRetry(for request: URLRequest, for endpoint: any Endpoint, remainingRetries: Int) async throws -> Data {
+        var newRequest = request
+        try await attemptAuthentication(for: &newRequest)
+        return try await performRequest(newRequest, for: endpoint, remainingRetries: remainingRetries - 1)
+    }
+    
+    
+    private func attemptAuthentication(for request: inout URLRequest) async throws {
+        if let authenticator = self as? (any AuthenticationServicing) {
+            try await authenticator.refreshToken()
+            try await authenticator.addAuthenticationHeader(to: &request)
+        }
     }
 }

@@ -2,7 +2,9 @@ import Foundation
 
 /// An actor that manages authentication tasks, such as retrieving and refreshing tokens.
 /// Conforms to the `AuthenticationServicing` protocol to provide authentication capabilities.
-public actor LazyAuthenticationService<T: TokenRefreshEndpoint>: AuthenticationServicing {
+public actor LazyAuthenticationService<T: TokenRefreshEndpoint>: AuthenticationServicing, NetworkStatusProviding {
+   
+    
     
     /// The type of the token refresh endpoint.
     public typealias RefreshEndpoint = T
@@ -25,6 +27,9 @@ public actor LazyAuthenticationService<T: TokenRefreshEndpoint>: AuthenticationS
     /// The expiration date of the current authentication token.
     public var tokenExpiration: Date?
     
+    /// A basic network monitor that publishes changes to the device's network connection.
+    public let networkMonitor: any NetworkMonitoring
+    
     
     /// Initializes a new instance of `LazyAuthenticationService`.
     ///
@@ -32,17 +37,20 @@ public actor LazyAuthenticationService<T: TokenRefreshEndpoint>: AuthenticationS
     ///   - networkClient: The network client used to send requests.
     ///   - tokenRefreshEndpoint: The endpoint used to refresh authentication tokens.
     ///   - decoder: A JSON decoder for decoding responses. Defaults to a new `JSONDecoder`.
-    ///   - encoder: A JSON encoder for encoding request bodies. Defaults to a new `JSONEncoder`.
+    ///   - encoder: A JSON encoder for encoding request bodies. Defaults to a new `JSONEncoder
+    ///   - networkMonitor: The type implementing `NetworkMonitoring`. Defaults to a basic implementation.
     public init(
         networkClient: NetworkDataTransporting,
         tokenRefreshEndpoint: T,
         decoder: JSONDecoder = JSONDecoder(),
-        encoder: JSONEncoder = JSONEncoder()
+        encoder: JSONEncoder = JSONEncoder(),
+        networkMonitor: any NetworkMonitoring = NetworkMonitor()
     ) {
         self.networkClient = networkClient
         self.tokenRefreshEndpoint = tokenRefreshEndpoint
         self.decoder = decoder
         self.encoder = encoder
+        self.networkMonitor = networkMonitor
     }
     
     

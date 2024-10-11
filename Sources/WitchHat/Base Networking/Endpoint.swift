@@ -106,31 +106,23 @@ public extension Endpoint {
     /// Constructs the full URL for the request, combining the `baseURL`, `path`, and `queryItems`.
     /// - Returns: A complete `URL` object for the request.
     var url: URL {
-        // Create URL components from the base URL and append the path if provided.
-        let baseComponents = path.map {
-            URLComponents(
-                url: baseURL.appendingPathComponent($0),
-                resolvingAgainstBaseURL: true
-            )
-        } ?? URLComponents(url: baseURL, resolvingAgainstBaseURL: true)
+        var baseComponents = baseComponents
         
-        // If there are no query items, return the base URL.
         guard queryItems?.isEmpty == false else {
             return baseComponents?.url ?? baseURL
         }
         
-        // Add query items to the components and return the constructed URL.
-        var components = baseComponents
-        components?.queryItems = queryItems
+        baseComponents?.queryItems = queryItems
         
-        guard let url = components?.url else {
+        guard let url = baseComponents?.url else {
             preconditionFailure(
-                "Invalid URL components: \(String(describing: components))"
+                "Invalid URL components: \(String(describing: baseComponents))"
             )
         }
         
         return url
     }
+    
 
     /// Creates a `URLRequest` object configured with the endpoint's details.
     /// - Parameter encoder: A `JSONEncoder` for encoding the request body if one is present.
@@ -151,6 +143,21 @@ public extension Endpoint {
 }
 
 
+//  MARK: - Private API
+private extension Endpoint {
+    
+    private var baseComponents: URLComponents? {
+        path.map {
+            URLComponents(
+                url: baseURL.appendingPathComponent($0),
+                resolvingAgainstBaseURL: true
+            )
+        } ?? URLComponents(url: baseURL, resolvingAgainstBaseURL: true)
+    }
+}
+
+
+//  MARK: - Array Extension Helper
 fileprivate extension Array where Element == HTTPHeader {
 
     func toDictionary() -> [String: String] {
